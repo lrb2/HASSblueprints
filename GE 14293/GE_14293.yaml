@@ -1,0 +1,36 @@
+blueprint:
+  name: GE 14293 Handler
+  description: Run actions on either the single or double, depending on group association, press of the on/off switch on the GE/Jasco in-wall toggle switches.
+  domain: automation
+  input:
+    switch:
+      name: Switch
+      description: This switch must have either group 2 (single press) or group 3 (double press) associated with your Z-Wave controller.
+      selector:
+        entity:
+          integration: zwave
+          domain: zwave
+    action_on:
+      name: Action For 'On' Event
+      selector:
+        action:
+    action_off:
+      name: Action For 'Off' Event
+      selector:
+        action:
+mode: queued
+trigger:
+- platform: event
+  event_type: zwave.node_event
+  event_data:
+    entity_id: !input switch
+action:
+- variables:
+    level: "{{ trigger.event.data.basic_level }}"
+- choose:
+  - conditions:
+      - "{{ level == 255 }}"
+    sequence: !input action_on
+  - conditions:
+      - "{{ level == 0 }}"
+    sequence: !input action_off
