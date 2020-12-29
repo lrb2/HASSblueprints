@@ -12,10 +12,12 @@ blueprint:
           domain: zwave
     action_on:
       name: Action For 'On' Event
+      default:
       selector:
         action:
     action_off:
       name: Action For 'Off' Event
+      default:
       selector:
         action:
 mode: queued

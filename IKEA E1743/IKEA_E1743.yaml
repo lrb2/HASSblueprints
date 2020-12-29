@@ -12,18 +12,22 @@ blueprint:
           model: TRADFRI on/off switch
     action_on:
       name: Action For 'On' Button Press
+      default:
       selector:
         action:
     action_off:
       name: Action For 'Off' Button Press
+      default:
       selector:
         action:
     action_on_hold:
       name: Action For 'On' Button Hold
+      default:
       selector:
         action:
     action_off_hold:
       name: Action For 'Off' Button Hold
+      default:
       selector:
         action:
 mode: queued
