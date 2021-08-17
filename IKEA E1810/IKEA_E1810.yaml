@@ -1,0 +1,170 @@
+blueprint:
+  name: IKEA E1810 Handler
+  description: Run actions on the press or hold of the buttons on the TRÅDFRI wireless 5-button remote.
+  domain: automation
+  input:
+    remote:
+      name: Remote
+      selector:
+        device:
+          integration: zha
+          manufacturer: IKEA of Sweden
+          model: TRADFRI remote control
+    action_center_press:
+      name: Action For Center Button Press
+      default: 
+      selector:
+        action:
+    action_center_hold:
+      name: Action For Center Button Hold
+      default:
+      selector:
+        action:
+    action_up_press:
+      name: Action For Brightness Up Button Press
+      default:
+      selector:
+        action:
+    action_up_hold:
+      name: Action For Brightness Up Button Hold
+      default:
+      selector:
+        action:
+    bool_up_hold_repeat:
+      name: Repeat Brightness Up Button Hold Action
+      default: false
+      selector:
+        boolean:
+    action_down_press:
+      name: Action For Brightness Down Button Press
+      default:
+      selector:
+        action:
+    action_down_hold:
+      name: Action For Brightness Down Button Hold
+      default:
+      selector:
+        action:
+    bool_down_hold_repeat:
+      name: Repeat Brightness Down Button Hold Action
+      default: false
+      selector:
+        boolean:
+    action_left_press:
+      name: Action For Left Button Press
+      default:
+      selector:
+        action:
+    action_left_hold:
+      name: Action For Left Button Hold
+      default:
+      selector:
+        action:
+    bool_left_hold_repeat:
+      name: Repeat Left Button Hold Action
+      default: false
+      selector:
+        boolean:
+    action_right_press:
+      name: Action For Right Button Press
+      default:
+      selector:
+        action:
+    action_right_hold:
+      name: Action For Right Button Hold
+      default:
+      selector:
+        action:
+    bool_right_hold_repeat:
+      name: Repeat Right Button Hold Action
+      default: false
+      selector:
+        boolean:
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+action:
+- variables:
+    command: "{{ trigger.event.data.command }}"
+    args: "{{ trigger.event.data.args }}"
+    repeat_action_up: !input bool_up_hold_repeat
+    repeat_action_down: !input bool_down_hold_repeat
+    repeat_action_left: !input bool_left_hold_repeat
+    repeat_action_right: !input bool_right_hold_repeat
+- choose:
+  - conditions:
+      - "{{ command == 'toggle' }}"
+      - "{{ args == [] }}"
+    sequence: !input action_center_press
+  - conditions:
+      - "{{ command == 'press' }}"
+      - "{{ args == [2, 0, 0] }}"
+    sequence: !input action_center_hold
+  - conditions:
+      - "{{ command == 'step_with_on_off' }}"
+      - "{{ args == [0, 43, 5] }}"
+    sequence: !input action_up_press
+  - conditions:
+      - "{{ command == 'move_with_on_off' }}"
+      - "{{ args == [0, 84] }}"
+      - "{{ repeat_action_up }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_up_hold
+  - conditions:
+      - "{{ command == 'move_with_on_off' }}"
+      - "{{ args == [0, 84] }}"
+    sequence: !input action_up_hold
+  - conditions:
+      - "{{ command == 'step' }}"
+      - "{{ args == [1, 43, 5] }}"
+    sequence: !input action_down_press
+  - conditions:
+      - "{{ command == 'move' }}"
+      - "{{ args == [1, 84] }}"
+      - "{{ repeat_action_down }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_down_hold
+  - conditions:
+      - "{{ command == 'move' }}"
+      - "{{ args == [1, 84] }}"
+    sequence: !input action_down_hold
+  - conditions:
+      - "{{ command == 'press' }}"
+      - "{{ args == [257, 13, 0] }}"
+    sequence: !input action_left_press
+  - conditions:
+      - "{{ command == 'hold' }}"
+      - "{{ args == [3329, 0] }}"
+      - "{{ repeat_action_left }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_left_hold
+  - conditions:
+      - "{{ command == 'hold' }}"
+      - "{{ args == [3329, 0] }}"
+    sequence: !input action_left_hold
+  - conditions:
+      - "{{ command == 'press' }}"
+      - "{{ args == [256, 13, 0] }}"
+    sequence: !input action_right_press
+  - conditions:
+      - "{{ command == 'hold' }}"
+      - "{{ args == [3328, 0] }}"
+      - "{{ repeat_action_right }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_right_hold
+  - conditions:
+      - "{{ command == 'hold' }}"
+      - "{{ args == [3328, 0] }}"
+    sequence: !input action_right_hold

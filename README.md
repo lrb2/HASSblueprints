@@ -7,4 +7,5 @@ My collection of custom Home Assistant blueprints.
 ---
 
 1. [IKEA E1743](IKEA%20E1743) (TRÅDFRI wireless on/off switch)
-2. [GE 14293](GE%2014293) (GE/Jasco in-wall toggle switch)
+2. [IKEA E1810](IKEA%20E1810) (TRÅDFRI wireless 5-button remote)
+3. [GE 14293](GE%2014293) (GE/Jasco in-wall toggle switch)
