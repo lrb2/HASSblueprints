@@ -25,11 +25,21 @@ blueprint:
       default:
       selector:
         action:
+    bool_on_hold_repeat:
+      name: Repeat 'On' Button Hold Action
+      default: false
+      selector:
+        boolean:
     action_off_hold:
       name: Action For 'Off' Button Hold
       default:
       selector:
         action:
+    bool_off_hold_repeat:
+      name: Repeat 'Off' Button Hold Action
+      default: false
+      selector:
+        boolean:
 mode: queued
 trigger:
 - platform: event
@@ -42,6 +52,8 @@ action:
     cluster_id: "{{ trigger.event.data.cluster_id }}"
     endpoint_id: "{{ trigger.event.data.endpoint_id }}"
     args: "{{ trigger.event.data.args }}"
+    repeat_action_on: !input bool_on_hold_repeat
+    repeat_action_off: !input bool_off_hold_repeat
 - choose:
   - conditions:
       - "{{ command == 'on' }}"
@@ -58,7 +70,27 @@ action:
       - "{{ cluster_id == 8 }}"
       - "{{ endpoint_id == 1 }}"
       - "{{ args == [0, 83] }}"
+      - "{{ repeat_action_on }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_on_hold
+  - conditions:
+      - "{{ command == 'move_with_on_off' }}"
+      - "{{ cluster_id == 8 }}"
+      - "{{ endpoint_id == 1 }}"
+      - "{{ args == [0, 83] }}"
     sequence: !input action_on_hold
+  - conditions:
+      - "{{ command == 'move' }}"
+      - "{{ cluster_id == 8 }}"
+      - "{{ endpoint_id == 1 }}"
+      - "{{ args == [1, 83] }}"
+      - "{{ repeat_action_off }}"
+    sequence:
+      - repeat:
+          while: "{{ repeat.index < 500 }}"
+          sequence: !input action_off_hold
   - conditions:
       - "{{ command == 'move' }}"
       - "{{ cluster_id == 8 }}"
