@@ -110,7 +110,6 @@ action:
     sequence: !input action_up_press
   - conditions:
       - "{{ command == 'move_with_on_off' }}"
-      - "{{ args == [0, 84] }}"
       - "{{ repeat_action_up }}"
     sequence:
       - repeat:
@@ -118,7 +117,6 @@ action:
           sequence: !input action_up_hold
   - conditions:
       - "{{ command == 'move_with_on_off' }}"
-      - "{{ args == [0, 84] }}"
     sequence: !input action_up_hold
   - conditions:
       - "{{ command == 'step' }}"
@@ -126,7 +124,6 @@ action:
     sequence: !input action_down_press
   - conditions:
       - "{{ command == 'move' }}"
-      - "{{ args == [1, 84] }}"
       - "{{ repeat_action_down }}"
     sequence:
       - repeat:
@@ -134,7 +131,6 @@ action:
           sequence: !input action_down_hold
   - conditions:
       - "{{ command == 'move' }}"
-      - "{{ args == [1, 84] }}"
     sequence: !input action_down_hold
   - conditions:
       - "{{ command == 'press' }}"
